@@ -663,6 +663,22 @@ h1, h2, h3 {
   .nav-links { gap: 1.2rem; }
   .nav { padding: 0.85rem 1.25rem; }
   .section { padding: 3.5rem 0; }
+
+  .about-inner {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .profile-photo {
+    width: 220px;
+    height: 220px;
+  }
+
+  .about-bullets {
+    text-align: left;
+  }
 }
 
 @media (max-width: 420px) {
