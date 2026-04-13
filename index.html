@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jingrong Chen</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HAMBURGER BUTTON -->
+  <button class="hamburger fade-in" id="hamburger" aria-label="Open menu">
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- FULL-SCREEN MENU OVERLAY -->
+  <div class="menu-overlay" id="menuOverlay">
+    <nav class="menu-nav">
+      <a href="#about"     class="menu-link" data-section="about">About Me</a>
+      <a href="procreate.html" class="menu-link" data-section="procreate">Procreate Art</a>
+      <a href="#contact"   class="menu-link" data-section="contact">Contact</a>
+    </nav>
+  </div>
+
+  <!-- HERO (unchanged) -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <img src="cristian-palmer-XexawgzYOBc-unsplash.jpg" alt="Ocean by Cristian Palmer" class="hero-bg-img" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-greeting slide-up delay-1">Hi there, I'm</p>
+      <h1 class="hero-name slide-up delay-2">Jingrong Chen</h1>
+      <p class="hero-role slide-up delay-3">Welcome to my corner! I'm based in Dogpatch, San Francisco, and currently work as a data scientist at Discord. I'm someone who's always chasing a sense of flow—whether that's illustrating on my iPad or drifting underwater while scuba diving. I'm drawn to experiences that feel immersive, a little disorienting, and deeply alive.</p>
+      <a class="dive-deeper slide-up delay-4" href="#about" aria-label="Scroll to About Me">
+        <span class="dive-label">Dive Deeper</span>
+        <svg class="dive-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="6 9 12 15 18 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- BUBBLE CANVAS -->
+  <canvas id="bubbleCanvas"></canvas>
+
+  <!-- ABOUT -->
+  <section class="about section" id="about">
+    <div class="ambient-light"></div>
+    <div class="container about-inner">
+      <div class="about-profile reveal">
+        <img src="profile-photo-converted.jpg" alt="Jingrong Chen" class="profile-photo" />
+      </div>
+      <div class="about-body">
+        <h2 class="section-title reveal">A Little More</h2>
+        <ul class="about-bullets">
+          <li class="bullet-item reveal">Data scientist at <strong>Discord</strong>, Chat team — making conversations more meaningful</li>
+          <li class="bullet-item reveal">Previously at <strong>Twitch</strong> (live streaming), <strong>Jam City</strong> (mobile gaming), and <strong>NBCUniversal</strong> (entertainment)</li>
+          <li class="bullet-item reveal">Certified <strong>Open Water & Advanced Open Water</strong> scuba diver</li>
+          <li class="bullet-item reveal">Food illustrator on iPad — watercolor brushes in <strong>Procreate</strong></li>
+          <li class="bullet-item reveal">200+ hours each in <strong>Breath of the Wild</strong> & <strong>Tears of the Kingdom</strong></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- PROCREATE ART -->
+  <section class="section procreate-section" id="procreate">
+    <div class="ambient-light"></div>
+    <div class="container">
+      <h2 class="section-title reveal">Procreate Art</h2>
+      <p class="about-text reveal">I picked up Procreate in 2020 as a pandemic hobby and quickly fell into the process of experimenting—different styles, different brushes, different ways of seeing. Over time, I found myself drawn to watercolor textures and food-themed illustrations. You can check out some of my doodles <a href="procreate.html" target="_blank" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">here</a>.</p>
+    </div>
+  </section>
+
+
+
+
+  <!-- CONTACT -->
+  <section class="contact section" id="contact">
+    <div class="ambient-light ambient-light--center"></div>
+    <div class="container contact-inner">
+      <h2 class="section-title reveal">Say Hi</h2>
+      <p class="contact-sub reveal">Whether it's data, deep dives, or game recommendations — my inbox is open.</p>
+      <a class="contact-btn reveal" href="mailto:jingronc@gmail.com">jingronc@gmail.com</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Made with 💙 by Jingrong Chen</p>
+    <p class="photo-credit">Photo by <a href="https://unsplash.com/@cristianpalmer?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" target="_blank" rel="noopener">Cristian Palmer</a> on <a href="https://unsplash.com/photos/clear-blue-body-of-water-XexawgzYOBc?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" target="_blank" rel="noopener">Unsplash</a></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
