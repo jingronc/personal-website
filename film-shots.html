@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Procreate Art — Jingrong Chen</title>
+  <title>Film Shots — Jingrong Chen</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐠</text></svg>">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GHFT5PYBY"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -14,7 +15,7 @@
   <link rel="stylesheet" href="style.css" />
   <style>
     /* ── Page layout ── */
-    .procreate-page {
+    .film-page {
       min-height: 100vh;
       padding: 5rem 0 6rem;
       position: relative;
@@ -59,20 +60,19 @@
 
     /* ── Masonry gallery ── */
     .gallery-masonry {
-      columns: 3;
+      columns: 2;
       column-gap: 1.25rem;
       position: relative;
       z-index: 1;
     }
 
-    @media (max-width: 800px) { .gallery-masonry { columns: 2; } }
-    @media (max-width: 480px) { .gallery-masonry { columns: 1; } }
+    @media (max-width: 600px) { .gallery-masonry { columns: 1; } }
 
-    /* ── Art card ── */
+    /* ── Photo card ── */
     .art-card {
       break-inside: avoid;
       margin-bottom: 1.25rem;
-      background: #faf8f5;
+      background: #0a0a0a;
       border-radius: 10px;
       overflow: hidden;
       box-shadow:
@@ -107,26 +107,12 @@
       height: auto;
     }
 
-    .art-card-label {
-      padding: 0.65rem 1rem 0.8rem;
-      background: #faf8f5;
-      border-top: 1px solid rgba(0,0,0,0.06);
-    }
-
-    .art-card-label span {
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #7a6a5a;
-    }
-
     /* ── Lightbox ── */
     .lightbox {
       position: fixed;
       inset: 0;
       z-index: 500;
-      background: rgba(0, 10, 18, 0.92);
+      background: rgba(0, 5, 10, 0.95);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       display: flex;
@@ -144,12 +130,12 @@
     }
 
     .lightbox-img {
-      max-width: min(90vw, 700px);
+      max-width: min(90vw, 900px);
       max-height: 88vh;
       width: auto;
       height: auto;
-      border-radius: 10px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+      border-radius: 6px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.8);
       transform: scale(0.94);
       transition: transform 0.3s ease;
     }
@@ -173,25 +159,17 @@
     }
     .lightbox-close:hover { color: #fff; }
 
-    .lightbox-caption {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
-      z-index: 501;
-    }
-
     /* ── Stagger delays ── */
-    .art-card:nth-child(1) { transition-delay: 0.05s; }
-    .art-card:nth-child(2) { transition-delay: 0.12s; }
-    .art-card:nth-child(3) { transition-delay: 0.19s; }
-    .art-card:nth-child(4) { transition-delay: 0.26s; }
-    .art-card:nth-child(5) { transition-delay: 0.33s; }
+    .art-card:nth-child(1)  { transition-delay: 0.05s; }
+    .art-card:nth-child(2)  { transition-delay: 0.10s; }
+    .art-card:nth-child(3)  { transition-delay: 0.15s; }
+    .art-card:nth-child(4)  { transition-delay: 0.20s; }
+    .art-card:nth-child(5)  { transition-delay: 0.25s; }
+    .art-card:nth-child(6)  { transition-delay: 0.30s; }
+    .art-card:nth-child(7)  { transition-delay: 0.35s; }
+    .art-card:nth-child(8)  { transition-delay: 0.40s; }
+    .art-card:nth-child(9)  { transition-delay: 0.45s; }
+    .art-card:nth-child(10) { transition-delay: 0.50s; }
   </style>
 </head>
 <body>
@@ -206,8 +184,8 @@
   <div class="menu-overlay" id="menuOverlay">
     <nav class="menu-nav">
       <a href="index.html#about"   class="menu-link">About Me</a>
-      <a href="procreate.html"     class="menu-link active">Procreate Art</a>
-      <a href="film-shots.html"    class="menu-link">Film Shots</a>
+      <a href="procreate.html"     class="menu-link">Procreate Art</a>
+      <a href="film-shots.html"    class="menu-link active">Film Shots</a>
       <a href="index.html#contact" class="menu-link">Contact</a>
     </nav>
   </div>
@@ -216,13 +194,12 @@
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
     <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
     <img class="lightbox-img" id="lightboxImg" src="" alt="" />
-    <p class="lightbox-caption" id="lightboxCaption"></p>
   </div>
 
   <!-- BUBBLES -->
   <canvas id="bubbleCanvas" class="visible"></canvas>
 
-  <main class="procreate-page">
+  <main class="film-page">
     <div class="ambient-light"></div>
     <div class="ambient-light ambient-light--right"></div>
     <div class="container">
@@ -235,35 +212,50 @@
       </a>
 
       <div class="page-header">
-        <h1 class="section-title">Procreate Art</h1>
-        <p class="page-sub">Watercolor food illustrations · iPad · 2020–present</p>
+        <h1 class="section-title">Film Shots</h1>
+        <p class="page-sub">FUJI X-M5 &nbsp;·&nbsp; Singapore &amp; Japan</p>
       </div>
 
       <div class="gallery-masonry" id="gallery">
 
-        <div class="art-card" data-src="Procreate%20Portfolio/Cherry.JPG" data-label="Cherry Danish">
-          <img src="Procreate%20Portfolio/Cherry.JPG" alt="Cherry Danish" loading="lazy" />
-          <div class="art-card-label"><span>Cherry Danish</span></div>
+        <div class="art-card" data-src="Fuji%20xm5%20photos/DSCF0030.JPG">
+          <img src="Fuji%20xm5%20photos/DSCF0030.JPG" alt="Film Shot" loading="lazy" />
         </div>
 
-        <div class="art-card" data-src="Procreate%20Portfolio/crossot.PNG" data-label="Croissant">
-          <img src="Procreate%20Portfolio/crossot.PNG" alt="Croissant" loading="lazy" />
-          <div class="art-card-label"><span>Croissant</span></div>
+        <div class="art-card" data-src="Fuji%20xm5%20photos/DSCF0058.JPG">
+          <img src="Fuji%20xm5%20photos/DSCF0058.JPG" alt="Film Shot" loading="lazy" />
         </div>
 
-        <div class="art-card" data-src="Procreate%20Portfolio/Bun.JPG" data-label="Ebi Nigiri">
-          <img src="Procreate%20Portfolio/Bun.JPG" alt="Ebi Nigiri" loading="lazy" />
-          <div class="art-card-label"><span>Ebi Nigiri</span></div>
+        <div class="art-card" data-src="Fuji%20xm5%20photos/DSCF0104.JPG">
+          <img src="Fuji%20xm5%20photos/DSCF0104.JPG" alt="Film Shot" loading="lazy" />
         </div>
 
-        <div class="art-card" data-src="Procreate%20Portfolio/Bread_2.JPG" data-label="Bread Roll">
-          <img src="Procreate%20Portfolio/Bread_2.JPG" alt="Bread Roll" loading="lazy" />
-          <div class="art-card-label"><span>Bread Roll</span></div>
+        <div class="art-card" data-src="Fuji%20xm5%20photos/DSCF0141.JPG">
+          <img src="Fuji%20xm5%20photos/DSCF0141.JPG" alt="Film Shot" loading="lazy" />
         </div>
 
-        <div class="art-card" data-src="Procreate%20Portfolio/Yellow_Bun.JPG" data-label="Yellow Bun">
-          <img src="Procreate%20Portfolio/Yellow_Bun.JPG" alt="Yellow Bun" loading="lazy" />
-          <div class="art-card-label"><span>Yellow Bun</span></div>
+        <div class="art-card" data-src="Fuji%20xm5%20photos/DSCF0142.JPG">
+          <img src="Fuji%20xm5%20photos/DSCF0142.JPG" alt="Film Shot" loading="lazy" />
+        </div>
+
+        <div class="art-card" data-src="Fuji%20xm5%20photos/DSCF0150.JPG">
+          <img src="Fuji%20xm5%20photos/DSCF0150.JPG" alt="Film Shot" loading="lazy" />
+        </div>
+
+        <div class="art-card" data-src="Fuji%20xm5%20photos/DSCF0151.JPG">
+          <img src="Fuji%20xm5%20photos/DSCF0151.JPG" alt="Film Shot" loading="lazy" />
+        </div>
+
+        <div class="art-card" data-src="Fuji%20xm5%20photos/DSCF0153.JPG">
+          <img src="Fuji%20xm5%20photos/DSCF0153.JPG" alt="Film Shot" loading="lazy" />
+        </div>
+
+        <div class="art-card" data-src="Fuji%20xm5%20photos/DSCF0160.JPG">
+          <img src="Fuji%20xm5%20photos/DSCF0160.JPG" alt="Film Shot" loading="lazy" />
+        </div>
+
+        <div class="art-card" data-src="Fuji%20xm5%20photos/LULU4944.JPG">
+          <img src="Fuji%20xm5%20photos/LULU4944.JPG" alt="Film Shot" loading="lazy" />
         </div>
 
       </div>
@@ -306,16 +298,14 @@
     cards.forEach(card => revealObserver.observe(card));
 
     // ── Lightbox ──
-    const lightbox        = document.getElementById('lightbox');
-    const lightboxImg     = document.getElementById('lightboxImg');
-    const lightboxCaption = document.getElementById('lightboxCaption');
-    const lightboxClose   = document.getElementById('lightboxClose');
+    const lightbox      = document.getElementById('lightbox');
+    const lightboxImg   = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
 
     cards.forEach(card => {
       card.addEventListener('click', () => {
         lightboxImg.src = card.dataset.src;
-        lightboxImg.alt = card.dataset.label;
-        lightboxCaption.textContent = card.dataset.label;
+        lightboxImg.alt = 'Film Shot';
         lightbox.classList.add('open');
         document.body.style.overflow = 'hidden';
       });
