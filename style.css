@@ -603,8 +603,26 @@ h1, h2, h3 {
   background: #001018;
   color: rgba(255,255,255,0.35);
   text-align: center;
-  padding: 1.25rem 1rem;
+  padding: 1.5rem 1rem;
   font-size: 0.85rem;
+}
+
+.footer-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.footer-icons a {
+  color: rgba(255,255,255,0.4);
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.footer-icons a:hover {
+  color: var(--highlight);
 }
 
 /* ============================================================
