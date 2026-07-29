@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>夜潜与海底星空 — Jingrong Chen</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐠</text></svg>">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GHFT5PYBY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7GHFT5PYBY');
+  </script>
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    .post-page {
+      min-height: 100vh;
+      padding: 5rem 0 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--accent); }
+    .back-link svg { width: 15px; height: 15px; }
+
+    .post-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+      background: rgba(0,180,216,0.15);
+      color: #00B4D8;
+    }
+
+    .post-title {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.2;
+      margin: 0 0 1rem;
+    }
+
+    .post-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      margin-bottom: 2.5rem;
+      display: block;
+    }
+
+    .post-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 2.5rem;
+    }
+
+    .post-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .post-body p { margin-bottom: 1.5rem; }
+    .post-body p:last-child { margin-bottom: 0; }
+    .post-body h2, .post-body h3 { color: rgba(255,255,255,0.92); margin: 2rem 0 1rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.5rem 1.4rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+      margin: 0 0 1.5rem;
+      font-style: italic;
+      color: rgba(255,255,255,0.85);
+    }
+    .post-body pre {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0 0 1.5rem;
+    }
+    .post-body img { max-width: 100%; border-radius: 8px; margin: 0 0 1rem; }
+    .post-body hr { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 2rem 0; }
+
+    .lang-switch {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .lang-switch a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .lang-switch a:hover { color: var(--accent); }
+    .lang-switch .lang-current { color: var(--accent); }
+    .lang-switch .lang-sep { color: rgba(255,255,255,0.2); }
+
+    .post-credit {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .post-credit a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 2px; }
+    .post-credit a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- HAMBURGER -->
+  <button class="hamburger dark fade-in" id="hamburger" aria-label="Open menu">
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- MENU OVERLAY -->
+  <div class="menu-overlay" id="menuOverlay">
+    <nav class="menu-nav">
+      <a href="../index.html#about"  class="menu-link">About Me</a>
+      <a href="../procreate.html"    class="menu-link">Procreate Art</a>
+      <a href="../film-shots.html"   class="menu-link">Film Shots</a>
+      <a href="../thoughts.html"     class="menu-link active">On My Mind</a>
+    </nav>
+  </div>
+
+  <!-- BUBBLES -->
+  <canvas id="bubbleCanvas" class="visible"></canvas>
+
+  <main class="post-page">
+    <div class="ambient-light"></div>
+    <div class="ambient-light ambient-light--right"></div>
+    <div class="container">
+      <div class="post-wrap">
+
+        <a href="../thoughts.html" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          All Posts
+        </a>
+
+        
+        <span class="post-tag">Diving</span>
+        <h1 class="post-title">夜潜与海底星空</h1>
+        <span class="post-date">May 31, 2026</span>
+
+        <hr class="post-divider" />
+
+        <div class="post-body">
+          <p>五月底回到快乐老家欧胡岛，开始了为期三天的夜潜训练。这是我人生中的第一次夜潜尝试。我的三次夜潜训练都在欧胡岛南边的Kewalo Pipe潜点，深度大概在15米左右，每一潜都会选择在日落前入水。刚开始下潜时，海底还残留着最后一点阳光，依然能看清珊瑚和礁石的轮廓。大约十分钟后，太阳彻底落山，光线逐渐消失，夜幕降临，夜潜体验才真正开始。整个世界像被人关掉了总开关，只剩下手电筒的光源来划开海底的黑暗。</p>
+<h3><strong>海洋有自己的昼夜</strong></h3>
+<p>第一次夜潜给我留下了三个最直观的印象：海洋生物的变化、视野的缩窄，以及方向感的迷失。</p>
+<p>从白天切换到夜晚， 即便是同一个潜点，也会变成完全不同的样子：白天活动的鱼群躲进礁石睡觉，而白天几乎不会露面的章鱼、龙虾、螃蟹还有鳗鱼却纷纷开始活动。</p>
+<p>第二个变化来自于视野。白天潜水的时候，总感觉深蓝的海洋辽阔得没有边界。而到了夜晚，我的世界被压缩成了手电筒前方几米远的光束，光圈之外的一切都隐没在黑暗里。但这种视野限制并没有让我感到压迫。我原本以为黑暗会放大恐惧，但夜潜真正放大的是探索感，让我更加专注于眼前。还有一个和预想完全不同的地方：夜潜反而更不容易和潜伴走散。白天潜水需要不断留意寻找彼此的位置，而到了晚上，只要看到身边的手电光，就知道潜伴在哪里。</p>
+<p>真正让我不适应的其实是方向感。没有远处的参照物，我很容易失去空间感。抬起头只能看见四周一片漆黑，低头看也只有手电照亮的一小块海底。我会比白天更加频繁地确认深度、免减压停留时间、残留气压和潜伴的位置。</p>
+<h3><strong>夜晚的大海藏着另一片星空</strong></h3>
+<p>夜潜训练里有一个我特别喜欢的环节：教练会示意我关闭所有光源，然后一瞬间整个世界彻底变得漆黑。没有手电，没有潜水电脑的背光，也没有任何可以依赖的光线。我和教练坐在 15 米深的沙地上，静静等待眼睛适应黑暗。这项训练的目的是确认我们在完全黑暗的环境里，依然能够稳定控制自己的中性浮力。在黑暗中静坐的三分钟里，当我伸出手在海水中轻轻挥动时，周围会亮起了一点点银白色的微光，后来我才得知这是受到扰动后发光的浮游生物。我开始不停地挥动双手，看着它们在黑暗中划出一道道短暂的光轨。每挥动一次，就会亮起一片；停下来，它们又迅速消失，重新融入黑暗。</p>
+<p>那一刻，我突然觉得，像有人把银河搬进了海里。</p>
+<p>后来每次想起第一次夜潜，我最先想到的都不是章鱼、龙虾，也不是黑暗本身，而是那片只存在了几秒钟的微光。</p>
+<h3><strong>第一次失控上升：“我是谁，我在哪”</strong></h3>
+<p>最后分享一个这次夜潜训练中的惊魂小插曲。</p>
+<p>夜潜第一天教练给我的配重比平时多了两磅（我平时穿 3mm 湿衣通常带 6 磅，而那天带了 8 磅），下水后才发现我的中性浮力一直不稳定。在海底的时候身体总是不受控制地往下沉，很多时候不得不用手撑住海底，才能重新调整自己的姿态（那段时间我脑子里一直在想另一件事：千万别按到海胆lol）。</p>
+<p>为了避免误触海胆和珊瑚，我开始尝试用 BCD 微调浮力。而在给 BCD 补了一点气后意外发生了，我的身体开始快速上升，而且越来越快，潜水电脑已经开始疯狂报警。整件事情发生得太快了，人在真正紧张的时候大脑不会自动播放教练上课时讲过的内容，况且我的身体和感官在当时还并未完全适应黑暗。理性上我知道应该马上泄掉 BCD 里的空气，但慌乱之中我甚至不知道应该按哪个按钮。那几秒钟里我脑子里只剩下一件事：保持呼吸。其他所有在开放水域训练里学过的动作都像突然消失了一样。我一边持续呼气，一边抬头确认上方有没有船只，眼睁睁地看着教练手电筒的光越来越远，而我则一路从 15 米深度直接冲出了水面。</p>
+<p>船长第一时间发现了我。大约两分钟后，教练也浮出了水面。他看着我第一句话就是："Are you okay?"。幸运的是这次失控上升没有造成任何伤害。我深吸了一口气确认肺部没有扩张损伤后告诉他我可以继续下潜。</p>
+<p>后来复盘这次经历时，我才真正理解为什么教练会反复让我可以练习那些看似简单的动作。平静的时候，每个人都知道正确答案。真正决定安全的，是当事情发生时身体是否已经根据肌肉记忆替大脑做出了反应。</p>
+<hr />
+<p>由于在欧胡岛的三次夜潜都是training dives，我不能带DJI相机下水。在这里就贴几张后来我的佛州Key Largo Molasses Reef的夜潜照片吧。</p>
+<img src="images/night-diving-zh-1.jpeg" alt="night-diving-zh" />
+<p><em>刚开始夜潜就在礁石下发现一只正在睡觉的护士鲨 [Molasses Reef]</em></p>
+<img src="images/night-diving-zh-2.jpeg" alt="night-diving-zh" />
+<p><em>躲在珊瑚礁里的海鳗 [Molasses Reef]</em></p>
+<img src="images/night-diving-zh-3.jpeg" alt="night-diving-zh" />
+<p><em>夜潜快要结束时一直海龟从身边游过 [Molasses Reef]</em></p>
+<img src="images/night-diving-zh-4.jpg" alt="night-diving-zh" />
+<p><em>每一潜都是夕阳下山之前入水 [Oahu]</em></p>
+<img src="images/night-diving-zh-5.jpg" alt="night-diving-zh" />
+<p><em>我和我的教练Roger在最后一次夜潜结束后的合影 [Ouhu]</em></p>
+        </div>
+        <p class="post-credit">Cover photo by <a href="https://unsplash.com/@sandbarproductions" target="_blank" rel="noopener">Chase Baker</a> on <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a></p>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-icons">
+      <a href="https://www.linkedin.com/in/chenjingrong/" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M20.45 20.45h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.354V9h3.414v1.561h.046c.476-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.284zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM6.87 20.45H3.803V9H6.87v11.45zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+      </a>
+      <a href="mailto:jingronc@gmail.com" aria-label="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <polyline points="2,4 12,13 22,4"/>
+        </svg>
+      </a>
+    </div>
+    <p>Made with 💙 by Jingrong Chen</p>
+  </footer>
+
+  <script>
+    const hamburger   = document.getElementById('hamburger');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuLinks   = document.querySelectorAll('.menu-link');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = menuOverlay.classList.toggle('is-open');
+      hamburger.classList.toggle('is-open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        menuOverlay.classList.remove('is-open');
+        hamburger.classList.remove('is-open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    const canvas = document.getElementById('bubbleCanvas');
+    const ctx    = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    function randomBubble() {
+      return {
+        x:       Math.random() * canvas.width,
+        y:       canvas.height + Math.random() * 200,
+        r:       Math.random() * 3 + 1,
+        speed:   Math.random() * 0.5 + 0.2,
+        opacity: Math.random() * 0.35 + 0.05,
+        drift:   (Math.random() - 0.5) * 0.4,
+      };
+    }
+
+    const bubbles = [];
+    for (let i = 0; i < 80; i++) {
+      const b = randomBubble();
+      b.y = Math.random() * canvas.height;
+      bubbles.push(b);
+    }
+
+    function drawBubble(b) {
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(94, 207, 218, ${b.opacity})`;
+      ctx.lineWidth   = 0.8;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180, 240, 245, ${b.opacity * 0.5})`;
+      ctx.fill();
+
+      b.y -= b.speed;
+      b.x += b.drift;
+      if (b.y + b.r < 0) Object.assign(b, randomBubble());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      bubbles.forEach(drawBubble);
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
