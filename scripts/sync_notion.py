@@ -81,6 +81,15 @@ COVER_CREDITS = {
     "night-diving": {"name": "Chase Baker", "profile_url": "https://unsplash.com/@sandbarproductions"},
 }
 
+# Centered-crop overrides for specific downloaded images, keyed by filename
+# stem (no extension — stable across HEIC->JPEG conversion). Value is the
+# target width/height ratio. Re-applied on every sync since the Notion
+# source photo itself is untouched (e.g. a portrait phone photo you want
+# to appear landscape to match the essay's other photos).
+CROP_OVERRIDES = {
+    "night-diving-zh-5": 1.5,
+}
+
 
 def die(msg):
     print(f"error: {msg}", file=sys.stderr)
@@ -175,7 +184,8 @@ def download_image(url, dest_path):
     req = urllib.request.Request(url)
     with urllib.request.urlopen(req) as resp:
         dest_path.write_bytes(resp.read())
-    return convert_if_unsupported(dest_path)
+    path = convert_if_unsupported(dest_path)
+    return apply_crop_override(path)
 
 
 def convert_if_unsupported(path):
@@ -191,6 +201,33 @@ def convert_if_unsupported(path):
     )
     path.unlink()
     return jpg_path
+
+
+def apply_crop_override(path):
+    """Re-applies a centered crop from CROP_OVERRIDES (keyed by filename
+    stem) every sync, since the source photo in Notion is untouched."""
+    ratio = CROP_OVERRIDES.get(path.stem)
+    if not ratio:
+        return path
+    result = subprocess.run(
+        ["sips", "-g", "pixelWidth", "-g", "pixelHeight", str(path)],
+        check=True, capture_output=True, text=True,
+    )
+    dims = {}
+    for line in result.stdout.splitlines():
+        line = line.strip()
+        if line.startswith("pixelWidth:"):
+            dims["w"] = int(line.split(":")[1])
+        elif line.startswith("pixelHeight:"):
+            dims["h"] = int(line.split(":")[1])
+    target_h = round(dims["w"] / ratio)
+    if target_h >= dims["h"]:
+        return path  # already at or wider than the target ratio
+    subprocess.run(
+        ["sips", "-c", str(target_h), str(dims["w"]), str(path)],
+        check=True, capture_output=True,
+    )
+    return path
 
 
 def image_url_and_ext(image_block):
