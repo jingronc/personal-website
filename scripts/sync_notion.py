@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
-Pulls published essays from the "Essays" Notion database and regenerates
-thoughts/<slug>.html for each one, plus the card grid in thoughts.html.
+Pulls one published essay from the "Essays" Notion database and (re)writes
+thoughts/<slug>/ for it — index.html (or <code>.html for a translation) plus
+its own photos — then updates just that essay's card in thoughts.html. Every
+other essay's folder is left untouched.
 
 Setup (one-time):
   1. Create an internal integration at https://www.notion.so/my-integrations
@@ -9,18 +11,31 @@ Setup (one-time):
   2. Open the "Essays" database inside the "Writing" page in Notion, click
      "..." -> "Connections" -> add your integration.
   3. export NOTION_TOKEN="secret_xxx"
+  4. (Optional, only needed to auto-credit a cover photo) Register a free
+     Access Key at https://unsplash.com/oauth/applications and:
+     export UNSPLASH_ACCESS_KEY="xxx"
 
 Usage:
-  python3 scripts/sync_notion.py
+  python3 scripts/sync_notion.py <slug> [<cover-unsplash-url>]
+
+  <slug> matches the Slug property in Notion (or the slugified Title, if
+  Slug is left blank).
+
+  <cover-unsplash-url>, if given, is the essay's cover photo's Unsplash page
+  URL — its photographer credit is looked up via the Unsplash API and saved
+  to scripts/cover_credits.json.
 
 Requires only the Python standard library (no pip installs, no Node).
 """
 
+import argparse
 import json
 import os
 import re
+import struct
 import subprocess
 import sys
+import urllib.parse
 import urllib.request
 from datetime import datetime
 from pathlib import Path
@@ -63,9 +78,9 @@ CARD_HEIGHTS = {
     "diving": 400, "gamedesign": 240, "bookreview": 180, "life": 300,
 }
 
-# Order determines which language becomes the "canonical" <slug>.html file when
-# more than one language is published for the same Slug; the rest get a
-# <slug>-<code>.html suffix.
+# Order determines which language becomes the "canonical" index.html inside
+# thoughts/<slug>/ when more than one language is published for the same
+# Slug; the rest get <code>.html (e.g. zh.html) in the same folder.
 LANGUAGE_ORDER = ["English", "Chinese"]
 LANGUAGE_META = {
     "English": {"code": "en", "label": "EN"},
@@ -74,22 +89,50 @@ LANGUAGE_META = {
 
 # Per-essay credit for custom Notion covers picked from Notion's built-in
 # Unsplash browser (as opposed to a category fallback, or a self-uploaded
-# photo which needs no credit). Keyed by the essay's Slug. Notion doesn't
-# expose photographer info through its API, so these are recorded by hand
-# whenever you tell me which photo you picked.
-COVER_CREDITS = {
-    "night-diving": {"name": "Chase Baker", "profile_url": "https://unsplash.com/@sandbarproductions"},
-}
+# photo which needs no credit). Keyed by the essay's Slug, persisted in
+# COVER_CREDITS_FILE — pass a cover's Unsplash URL as this script's second
+# argument and it's resolved and saved there automatically (Notion's own
+# API has no photographer info to give us).
+COVER_CREDITS_FILE = ROOT / "scripts" / "cover_credits.json"
 
-# Centered-crop overrides for specific downloaded images, keyed by filename
-# stem (no extension — stable across HEIC->JPEG conversion). Value is the
-# target width/height ratio. Re-applied on every sync since the Notion
-# source photo itself is untouched (e.g. a portrait phone photo you want
-# to appear landscape to match the essay's other photos).
-CROP_OVERRIDES = {
-    "night-diving-zh-5": 1.5,
-}
 
+def load_cover_credits():
+    if COVER_CREDITS_FILE.exists():
+        return json.loads(COVER_CREDITS_FILE.read_text(encoding="utf-8"))
+    return {}
+
+
+def save_cover_credits(credits):
+    COVER_CREDITS_FILE.write_text(
+        json.dumps(credits, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8"
+    )
+
+
+def resolve_unsplash_credit(url):
+    """Looks up an Unsplash photo's photographer via Unsplash's official API
+    — plain scraping gets blocked by their bot check. Needs a free Access Key
+    from https://unsplash.com/oauth/applications, exported as
+    UNSPLASH_ACCESS_KEY."""
+    access_key = os.environ.get("UNSPLASH_ACCESS_KEY")
+    if not access_key:
+        die(
+            "UNSPLASH_ACCESS_KEY environment variable is not set. Register a free "
+            "key at https://unsplash.com/oauth/applications, then export it, to "
+            "resolve a cover photo's credit."
+        )
+    # Unsplash photo URLs are ".../photos/<description-slug>-<photoId>" (or,
+    # rarely, just ".../photos/<photoId>") — the ID is always the last
+    # hyphen-separated chunk of the last path segment.
+    last_segment = urllib.parse.urlsplit(url).path.rstrip("/").split("/")[-1]
+    photo_id = last_segment.rsplit("-", 1)[-1]
+    req = urllib.request.Request(f"https://api.unsplash.com/photos/{photo_id}")
+    req.add_header("Authorization", f"Client-ID {access_key}")
+    try:
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        die(f"Unsplash API lookup failed for {url}: {e.code} {e.read().decode('utf-8', errors='replace')}")
+    return {"name": data["user"]["name"], "profile_url": data["user"]["links"]["html"]}
 
 def die(msg):
     print(f"error: {msg}", file=sys.stderr)
@@ -185,7 +228,7 @@ def download_image(url, dest_path):
     with urllib.request.urlopen(req) as resp:
         dest_path.write_bytes(resp.read())
     path = convert_if_unsupported(dest_path)
-    return apply_crop_override(path)
+    return normalize_orientation(path)
 
 
 def convert_if_unsupported(path):
@@ -203,30 +246,66 @@ def convert_if_unsupported(path):
     return jpg_path
 
 
-def apply_crop_override(path):
-    """Re-applies a centered crop from CROP_OVERRIDES (keyed by filename
-    stem) every sync, since the source photo in Notion is untouched."""
-    ratio = CROP_OVERRIDES.get(path.stem)
-    if not ratio:
+def _find_exif_orientation_entry(data):
+    """Locates the EXIF Orientation tag (0x0112) in a JPEG's APP1 segment.
+    Returns (struct_endian_fmt, byte_offset_of_the_2-byte_value), or None if
+    the file has no EXIF/orientation data."""
+    if data[0:2] != b"\xff\xd8":
+        return None
+    i = 2
+    while i < len(data) - 4:
+        if data[i] != 0xFF:
+            return None
+        marker = data[i + 1]
+        if marker == 0xE1:
+            size = struct.unpack(">H", data[i + 2:i + 4])[0]
+            block_start = i + 4
+            if bytes(data[block_start:block_start + 6]) != b"Exif\x00\x00":
+                i += 2 + size
+                continue
+            tiff_start = block_start + 6
+            fmt = "<" if bytes(data[tiff_start:tiff_start + 2]) == b"II" else ">"
+            ifd0 = tiff_start + struct.unpack(fmt + "I", data[tiff_start + 4:tiff_start + 8])[0]
+            num_entries = struct.unpack(fmt + "H", data[ifd0:ifd0 + 2])[0]
+            for e in range(num_entries):
+                entry = ifd0 + 2 + e * 12
+                tag = struct.unpack(fmt + "H", data[entry:entry + 2])[0]
+                if tag == 0x0112:
+                    return fmt, entry + 8
+            return None
+        elif marker in (0xD8, 0x01) or 0xD0 <= marker <= 0xD9:
+            i += 2
+        else:
+            size = struct.unpack(">H", data[i + 2:i + 4])[0]
+            i += 2 + size
+    return None
+
+
+def normalize_orientation(path):
+    """Bakes iPhone photos' EXIF rotation into the actual pixel data, so the
+    file's own pixelWidth/pixelHeight always match what browsers render
+    (browsers honor the Orientation tag; most other tools don't). `sips -r`
+    rotates pixels but leaves the stale tag in place, which would then
+    double-rotate the image everywhere else, so the tag is reset to 1
+    (normal) right after."""
+    if path.suffix.lower() not in (".jpg", ".jpeg"):
         return path
-    result = subprocess.run(
-        ["sips", "-g", "pixelWidth", "-g", "pixelHeight", str(path)],
-        check=True, capture_output=True, text=True,
-    )
-    dims = {}
-    for line in result.stdout.splitlines():
-        line = line.strip()
-        if line.startswith("pixelWidth:"):
-            dims["w"] = int(line.split(":")[1])
-        elif line.startswith("pixelHeight:"):
-            dims["h"] = int(line.split(":")[1])
-    target_h = round(dims["w"] / ratio)
-    if target_h >= dims["h"]:
-        return path  # already at or wider than the target ratio
-    subprocess.run(
-        ["sips", "-c", str(target_h), str(dims["w"]), str(path)],
-        check=True, capture_output=True,
-    )
+    data = path.read_bytes()
+    found = _find_exif_orientation_entry(data)
+    if not found:
+        return path
+    fmt, value_offset = found
+    orientation = struct.unpack(fmt + "H", data[value_offset:value_offset + 2])[0]
+    degrees = {3: 180, 6: 90, 8: 270}.get(orientation)
+    if degrees is None:
+        return path  # already normal, or a mirrored case phone cameras don't produce
+    subprocess.run(["sips", "-r", str(degrees), str(path)], check=True, capture_output=True)
+    data = bytearray(path.read_bytes())
+    found = _find_exif_orientation_entry(data)
+    if found:
+        fmt, value_offset = found
+        data[value_offset:value_offset + 2] = struct.pack(fmt + "H", 1)
+        path.write_bytes(data)
     return path
 
 
@@ -237,7 +316,7 @@ def image_url_and_ext(image_block):
     return url, ext
 
 
-def render_blocks(blocks, slug, image_counter):
+def render_blocks(blocks, article_dir, prefix, image_counter):
     html_parts = []
     i = 0
     while i < len(blocks):
@@ -251,7 +330,7 @@ def render_blocks(blocks, slug, image_counter):
                 item = blocks[i]
                 text = render_rich_text(item[btype]["rich_text"])
                 if item.get("_children"):
-                    text += render_blocks(item["_children"], slug, image_counter)
+                    text += render_blocks(item["_children"], article_dir, prefix, image_counter)
                 items.append(f"<li>{text}</li>")
                 i += 1
             html_parts.append(f"<{tag}>{''.join(items)}</{tag}>")
@@ -275,10 +354,10 @@ def render_blocks(blocks, slug, image_counter):
         elif btype == "image":
             image_counter[0] += 1
             url, ext = image_url_and_ext(block)
-            dest = download_image(url, IMAGES_DIR / f"{slug}-{image_counter[0]}{ext}")
+            dest = download_image(url, article_dir / f"{prefix}-{image_counter[0]}{ext}")
             filename = dest.name
             caption = render_rich_text(block["image"].get("caption", []))
-            html_parts.append(f'<img src="images/{filename}" alt="{caption or slug}" />')
+            html_parts.append(f'<img src="{filename}" alt="{caption or prefix}" />')
             if caption:
                 html_parts.append(f"<p><em>{caption}</em></p>")
         # other block types (callout, toggle, etc.) are skipped for now
@@ -297,14 +376,14 @@ def plain_text_of(rich_text_prop):
     return "".join(rt.get("plain_text", "") for rt in rich_text_prop)
 
 
-def get_cover(page, slug):
+def get_cover(page, article_dir, prefix):
     cover = page.get("cover")
     if not cover:
         return None
     url = cover["external"]["url"] if cover["type"] == "external" else cover["file"]["url"]
     ext = os.path.splitext(url.split("?")[0])[1] or ".jpg"
-    dest = download_image(url, IMAGES_DIR / f"{slug}-cover{ext}")
-    return f"images/{dest.name}"
+    dest = download_image(url, article_dir / f"{prefix}-cover{ext}")
+    return dest.name
 
 
 ESSAY_TEMPLATE = """<!DOCTYPE html>
@@ -321,7 +400,7 @@ ESSAY_TEMPLATE = """<!DOCTYPE html>
     gtag('js', new Date());
     gtag('config', 'G-7GHFT5PYBY');
   </script>
-  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../../style.css" />
   <style>
     .post-page {{
       min-height: 100vh;
@@ -413,7 +492,15 @@ ESSAY_TEMPLATE = """<!DOCTYPE html>
       overflow-x: auto;
       margin: 0 0 1.5rem;
     }}
-    .post-body img {{ max-width: 100%; border-radius: 8px; margin: 0 0 1rem; }}
+    .post-body img {{
+      max-width: 100%;
+      max-height: 520px;
+      width: auto;
+      height: auto;
+      display: block;
+      margin: 0 0 1rem;
+      border-radius: 8px;
+    }}
     .post-body hr {{ border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 2rem 0; }}
 
     .lang-switch {{
@@ -453,10 +540,10 @@ ESSAY_TEMPLATE = """<!DOCTYPE html>
   <!-- MENU OVERLAY -->
   <div class="menu-overlay" id="menuOverlay">
     <nav class="menu-nav">
-      <a href="../index.html#about"  class="menu-link">About Me</a>
-      <a href="../procreate.html"    class="menu-link">Procreate Art</a>
-      <a href="../film-shots.html"   class="menu-link">Film Shots</a>
-      <a href="../thoughts.html"     class="menu-link active">On My Mind</a>
+      <a href="../../index.html#about"  class="menu-link">About Me</a>
+      <a href="../../procreate.html"    class="menu-link">Procreate Art</a>
+      <a href="../../film-shots.html"   class="menu-link">Film Shots</a>
+      <a href="../../thoughts.html"     class="menu-link active">On My Mind</a>
     </nav>
   </div>
 
@@ -469,7 +556,7 @@ ESSAY_TEMPLATE = """<!DOCTYPE html>
     <div class="container">
       <div class="post-wrap">
 
-        <a href="../thoughts.html" class="back-link">
+        <a href="../../thoughts.html" class="back-link">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -583,7 +670,7 @@ ESSAY_TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 
-CARD_TEMPLATE = """        <a class="post-card post-card--{cat_class}" href="thoughts/{slug}.html" data-category="{cat_class}">
+CARD_TEMPLATE = """        <a class="post-card post-card--{cat_class}" href="thoughts/{slug}/index.html" data-category="{cat_class}">
           <div class="post-card-img" style="background-image: url('thoughts/{card_img}')"></div>
           <div class="post-card-body">
             <h2 class="post-title">{title}</h2>
@@ -595,11 +682,11 @@ CARD_TEMPLATE = """        <a class="post-card post-card--{cat_class}" href="tho
         </a>"""
 
 
-def build_credit_html(slug, cover_rel, meta):
+def build_credit_html(slug, cover_rel, meta, credits):
     if cover_rel == meta["fallback_img"]:
         credit = meta["fallback_credit"]
     else:
-        credit = COVER_CREDITS.get(slug)
+        credit = credits.get(slug)
     if not credit:
         return ""
     return (
@@ -623,17 +710,73 @@ def build_lang_switch(group, current_language, filenames):
     return '<div class="lang-switch">' + '<span class="lang-sep">|</span>'.join(parts) + "</div>"
 
 
+# Matches one card block in thoughts.html's SYNC region, capturing its slug.
+CARD_RE = re.compile(
+    r'<a class="post-card post-card--[\w-]+" href="thoughts/([\w-]+)/index\.html".*?</a>',
+    re.DOTALL,
+)
+# Pulls the trailing "Jul 27, 2026"-style date back out of a rendered card,
+# so newly-synced cards can be inserted in the right chronological spot
+# without re-fetching every other essay's Date from Notion.
+CARD_DATE_RE = re.compile(r"&nbsp;·&nbsp;\s*([^<]+)</span>")
+
+
+def _card_sort_key(card_html):
+    match = CARD_DATE_RE.search(card_html)
+    if not match:
+        return datetime.min
+    try:
+        return datetime.strptime(match.group(1).strip(), "%b %d, %Y")
+    except ValueError:
+        return datetime.min
+
+
+def update_index_card(slug, new_card_html):
+    """Replaces slug's card if present, otherwise inserts it in date order —
+    every other card's HTML is carried over byte-for-byte, untouched."""
+    index_html = THOUGHTS_INDEX.read_text(encoding="utf-8")
+    if SYNC_START not in index_html or SYNC_END not in index_html:
+        die(f"could not find sync markers in {THOUGHTS_INDEX}")
+    before, rest = index_html.split(SYNC_START, 1)
+    block, after = rest.split(SYNC_END, 1)
+
+    cards = [(m.group(1), m.group(0)) for m in CARD_RE.finditer(block)]
+    cards = [(s, html) for s, html in cards if s != slug]
+    cards.append((slug, new_card_html))
+    cards.sort(key=lambda sc: _card_sort_key(sc[1]), reverse=True)
+
+    new_block = SYNC_START + "\n" + "\n\n".join(html for _, html in cards) + "\n        " + SYNC_END
+    THOUGHTS_INDEX.write_text(before + new_block + after, encoding="utf-8")
+    print(f"updated {THOUGHTS_INDEX.relative_to(ROOT)} ({len(cards)} card(s) total)")
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("slug", help="Slug of the essay to sync, e.g. 'night-diving'")
+    parser.add_argument(
+        "cover_url", nargs="?", default=None,
+        help="Optional: this essay's cover photo's Unsplash URL, e.g. "
+             "https://unsplash.com/photos/xyz-4HOg7XW_9co — its photographer "
+             "credit is resolved via the Unsplash API (needs UNSPLASH_ACCESS_KEY) "
+             "and saved to scripts/cover_credits.json",
+    )
+    args = parser.parse_args()
+
     THOUGHTS_DIR.mkdir(exist_ok=True)
     IMAGES_DIR.mkdir(exist_ok=True)
 
-    pages = query_database(DATABASE_ID)
-    if not pages:
-        print("No published essays found (check the 'Published' checkbox in Notion).")
+    credits = load_cover_credits()
+    if args.cover_url:
+        credits[args.slug] = resolve_unsplash_credit(args.cover_url)
+        save_cover_credits(credits)
+        print(f"resolved cover credit for '{args.slug}': {credits[args.slug]['name']}")
 
-    # Pass 1: extract + render every published row, grouped by Slug so we can
-    # tell which rows are translations of each other before writing files.
-    groups = {}  # slug -> {language: row_dict}
+    pages = query_database(DATABASE_ID)
+
+    # Collect every published-row language variant for the requested slug
+    # only — every other row is skipped before any network/file work happens,
+    # so other essays' folders are never touched.
+    group = {}  # language -> row_dict
     for page in pages:
         props = page["properties"]
         title = plain_text_of(props["Title"]["title"])
@@ -648,8 +791,7 @@ def main():
             print(f"warning: skipping '{title}' — missing/unknown Language")
             continue
         slug = plain_text_of(props.get("Slug", {}).get("rich_text", [])).strip() or slugify(title)
-        if not slug:
-            print(f"warning: skipping '{title}' — no Slug set and title has no ASCII fallback")
+        if slug != args.slug:
             continue
 
         date_prop = props.get("Date", {}).get("date")
@@ -658,12 +800,15 @@ def main():
             dt = datetime.fromisoformat(date_prop["start"][:10])
             date_display = dt.strftime("%b %-d, %Y") if os.name != "nt" else dt.strftime("%b %d, %Y")
 
-        block_id_safe = f"{slug}-{LANGUAGE_META[language]['code']}"
+        code = LANGUAGE_META[language]["code"]
+        article_dir = THOUGHTS_DIR / slug
+        article_dir.mkdir(exist_ok=True)
         blocks = fetch_children(page["id"])
-        body_html = render_blocks(blocks, block_id_safe, [0])
-        cover_rel = get_cover(page, block_id_safe) or CATEGORY_META[category]["fallback_img"]
+        body_html = render_blocks(blocks, article_dir, code, [0])
+        cover_filename = get_cover(page, article_dir, code)
+        cover_rel = f"{slug}/{cover_filename}" if cover_filename else CATEGORY_META[category]["fallback_img"]
 
-        groups.setdefault(slug, {})[language] = {
+        group[language] = {
             "title": title,
             "category": category,
             "date_display": date_display,
@@ -671,54 +816,46 @@ def main():
             "cover_rel": cover_rel,
         }
 
-    # Pass 2: for each slug, pick the canonical (primary) language for the
-    # plain <slug>.html filename and the grid card; other languages get
-    # <slug>-<code>.html and a lang-switch link back and forth.
-    cards = []
-    for slug, group in groups.items():
-        present = [lang for lang in LANGUAGE_ORDER if lang in group]
-        primary = present[0]
-        filenames = {
-            lang: f"{slug}.html" if lang == primary else f"{slug}-{LANGUAGE_META[lang]['code']}.html"
-            for lang in present
-        }
+    if not group:
+        die(f"no published essay with slug '{args.slug}' found in Notion")
 
-        for lang in present:
-            row = group[lang]
-            meta = CATEGORY_META[row["category"]]
-            lang_switch = build_lang_switch(group, lang, filenames)
-            credit_html = build_credit_html(slug, row["cover_rel"], meta)
-            essay_html = ESSAY_TEMPLATE.format(
+    present = [lang for lang in LANGUAGE_ORDER if lang in group]
+    primary = present[0]
+    article_dir = THOUGHTS_DIR / args.slug
+    filenames = {
+        lang: "index.html" if lang == primary else f"{LANGUAGE_META[lang]['code']}.html"
+        for lang in present
+    }
+
+    for lang in present:
+        row = group[lang]
+        meta = CATEGORY_META[row["category"]]
+        lang_switch = build_lang_switch(group, lang, filenames)
+        credit_html = build_credit_html(args.slug, row["cover_rel"], meta, credits)
+        essay_html = ESSAY_TEMPLATE.format(
+            title=escape_html(row["title"]),
+            category=escape_html(row["category"]),
+            date_display=escape_html(row["date_display"]),
+            body_html=row["body_html"],
+            lang_switch=lang_switch,
+            credit_html=credit_html,
+        )
+        filename = filenames[lang]
+        (article_dir / filename).write_text(essay_html, encoding="utf-8")
+        print(f"wrote thoughts/{args.slug}/{filename}")
+
+        if lang == primary:
+            card_html = CARD_TEMPLATE.format(
+                cat_class=meta["class"],
+                slug=args.slug,
+                card_img=row["cover_rel"],
                 title=escape_html(row["title"]),
+                dot_class=meta["dot"],
                 category=escape_html(row["category"]),
                 date_display=escape_html(row["date_display"]),
-                body_html=row["body_html"],
-                lang_switch=lang_switch,
-                credit_html=credit_html,
             )
-            filename = filenames[lang]
-            (THOUGHTS_DIR / filename).write_text(essay_html, encoding="utf-8")
-            print(f"wrote thoughts/{filename}")
 
-            if lang == primary:
-                cards.append(CARD_TEMPLATE.format(
-                    cat_class=meta["class"],
-                    slug=slug,
-                    card_img=row["cover_rel"],
-                    title=escape_html(row["title"]),
-                    dot_class=meta["dot"],
-                    category=escape_html(row["category"]),
-                    date_display=escape_html(row["date_display"]),
-                ))
-
-    index_html = THOUGHTS_INDEX.read_text(encoding="utf-8")
-    if SYNC_START not in index_html or SYNC_END not in index_html:
-        die(f"could not find sync markers in {THOUGHTS_INDEX}")
-    before, rest = index_html.split(SYNC_START, 1)
-    _, after = rest.split(SYNC_END, 1)
-    new_block = SYNC_START + "\n" + "\n\n".join(cards) + "\n        " + SYNC_END
-    THOUGHTS_INDEX.write_text(before + new_block + after, encoding="utf-8")
-    print(f"updated {THOUGHTS_INDEX.relative_to(ROOT)} with {len(cards)} card(s)")
+    update_index_card(args.slug, card_html)
 
 
 if __name__ == "__main__":
