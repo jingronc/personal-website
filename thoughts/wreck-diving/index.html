@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>在Key Largo探访沉船 — Jingrong Chen</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐠</text></svg>">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GHFT5PYBY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7GHFT5PYBY');
+  </script>
+  <link rel="stylesheet" href="../../style.css" />
+  <style>
+    .post-page {
+      min-height: 100vh;
+      padding: 5rem 0 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--accent); }
+    .back-link svg { width: 15px; height: 15px; }
+
+    .post-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+      background: rgba(0,180,216,0.15);
+      color: #00B4D8;
+    }
+
+    .post-title {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.2;
+      margin: 0 0 1rem;
+    }
+
+    .post-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      margin-bottom: 2.5rem;
+      display: block;
+    }
+
+    .post-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 2.5rem;
+    }
+
+    .post-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .post-body p { margin-bottom: 1.5rem; }
+    .post-body p:last-child { margin-bottom: 0; }
+    .post-body h2, .post-body h3 { color: rgba(255,255,255,0.92); margin: 2rem 0 1rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.5rem 1.4rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+      margin: 0 0 1.5rem;
+      font-style: italic;
+      color: rgba(255,255,255,0.85);
+    }
+    .post-body pre {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0 0 1.5rem;
+    }
+    .post-body img {
+      max-width: 100%;
+      max-height: 520px;
+      width: auto;
+      height: auto;
+      display: block;
+      margin: 0 0 1rem;
+      border-radius: 8px;
+    }
+    .post-body hr { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 2rem 0; }
+
+    .lang-switch {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .lang-switch a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .lang-switch a:hover { color: var(--accent); }
+    .lang-switch .lang-current { color: var(--accent); }
+    .lang-switch .lang-sep { color: rgba(255,255,255,0.2); }
+
+    .post-credit {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .post-credit a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 2px; }
+    .post-credit a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- HAMBURGER -->
+  <button class="hamburger dark fade-in" id="hamburger" aria-label="Open menu">
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- MENU OVERLAY -->
+  <div class="menu-overlay" id="menuOverlay">
+    <nav class="menu-nav">
+      <a href="../../index.html#about"  class="menu-link">About Me</a>
+      <a href="../../procreate.html"    class="menu-link">Procreate Art</a>
+      <a href="../../film-shots.html"   class="menu-link">Film Shots</a>
+      <a href="../../thoughts.html"     class="menu-link active">On My Mind</a>
+    </nav>
+  </div>
+
+  <!-- BUBBLES -->
+  <canvas id="bubbleCanvas" class="visible"></canvas>
+
+  <main class="post-page">
+    <div class="ambient-light"></div>
+    <div class="ambient-light ambient-light--right"></div>
+    <div class="container">
+      <div class="post-wrap">
+
+        <a href="../../thoughts.html" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          All Posts
+        </a>
+
+        
+        <span class="post-tag">Diving</span>
+        <h1 class="post-title">在Key Largo探访沉船</h1>
+        <span class="post-date">Jul 5, 2026</span>
+
+        <hr class="post-divider" />
+
+        <div class="post-body">
+          <p>沉船一直是我最感兴趣的潜水专长之一。</p>
+<p>第一次在进阶开放水域课程中体验沉船潜水后我就一直对沉船念念不忘。相比于其他的海底生态，我觉得沉船有一种完全不同的魅力。一艘曾经执行过任务的船只，在沉入海底之后慢慢被珊瑚覆盖，成为各种海洋生物的新家园。原本属于人类的建筑，如今成为海洋生态的一部分，这种历史和自然交织在一起的画面让我觉得特别奇妙。</p>
+<p>最近又正好在读《Shadow Divers》。书里记录了一群技术潜水员探索一艘未知U-Boat真实身份的经历，也花了很多篇幅描写沉船渗透（penetration）的挑战：氮醉带来的判断力下降、船体内部错综复杂的结构、失去方向感后的心理压力，以及每一次决策都必须建立在冷静与纪律之上。阅读的过程中我逐渐意识到，沉船吸引我的除了历史感，还有探索沉船所需要的技巧，以及面对未知时保持冷静的勇气和能力。</p>
+<p>于是在七月初的独立日长周末，我决定solo trip飞去佛罗里达州的 Key Largo学习沉船专长课程（PADI Wreck Specialty），并尝试第一次有限的沉船内部渗透。</p>
+<h3>第一次进入真正的 overhead environment</h3>
+<p>沉船专长最核心的内容是学习如何在一个原本不属于人的空间里安全地探索。</p>
+<p>绝大多数休闲潜水员接触的都是开放水域，如果遇到紧急情况，头顶并没有障碍物，都可以直接上升到水面。而沉船和洞穴则属于头顶环境（overhead environment），进入之后，头顶不再是水面，而是厚重的钢铁结构或岩壁。一旦发生紧急情况，不能像开放水域那样直接上升，而是必须沿着原来的路线或者根据就近光源找到出口退出。</p>
+<p>而与此同时，沉船内部就像一个立体迷宫。走廊、舱室、楼梯四通八达，如果没有接受过专门训练，很容易失去方向感。</p>
+<p>沉船潜水对中性浮力也有更高的要求。如果姿势控制不好，不小心扬起沉积的泥沙，能见度可能会在短时间内急剧下降，会给自己以及潜伴团队带来危险。</p>
+<p>沉船专长里，我觉得最有趣的部分是学习如何利用导引绳进行渗透导航。看似简单的绳索，需要按照固定的方法完成系结、固定和回收，每一步都有明确的规范。练习水下打结的时候，整个人都处于高度专注的心流状态，恍惚间竟然有种自己是外科医生站在手术台前做手术的感觉。周围的环境都变得不重要，注意力完全落在手里的那根绳子上。</p>
+<h3>USS Spiegel Grove</h3>
+<p>我的沉船专长是在Keys的明星沉船潜点USS Spiegel Grove收官完成的。USS Spiegel Grove前身服役于美国海军，原本是一艘登陆舰，在退役后作为人工鱼礁沉入海底。船体全长约 510 英尺（155 米），船体非常庞大，甲板、舰桥、机舱等不同区域都可以进行探索。即使只探索船体外围，通常也需要至少 4 次船潜才能走完大部分区域，而船体内部则更加复杂，像一个巨大的水底迷宫，需要有经验的向导带领，或者接受过沉船渗透训练的潜水员才能进入。</p>
+<p>不同于之前的潜水经历，这次探访Spiegel Grove我内心的紧张还是大于期待的。Spiegel Grove经常有强流出现，即使是沿着绳下潜，也经常会有面镜被水流冲掉等突发情况。其次由于它甲板深度已经接近休闲潜水30米的极限，对潜水员的经验和技术都有比较高的要求。我下潜Spiegel Grove的当天能见度并不高，当巨大的船体慢慢从蓝色的海水里显现出来时，会突然意识到自己面对的并不是一艘普通的沉船，而是一艘真正意义上的军舰。</p>
+<img src="zh-1.jpg" alt="zh" />
+<p><em>(Photo credit to Sail Fish Scuba)</em></p>
+<p>成功到达预定深度后，进入沉船内部则是此次潜水的高潮。这次渗透由经验丰富的教练带队，而我也已经在之前的训练中完成了牵引绳的打结练习，所以我们决定选择一条更长、更深的路线来探索船体内部。</p>
+<img src="zh-2.jpeg" alt="zh" />
+<p>进入船舱的一瞬间，感觉就像走进了一间黑暗的密室。空间一下子变得狭窄起来，外面的自然光也很快消失，唯一的光源只剩下自己和教练手里的手电筒。原本在开放水域里很熟悉的空间感和方向感，在这里变得不太可靠。我只能跟着教练的路线在这艘巨大的迷宫里前进。</p>
+<img src="zh-3.jpeg" alt="zh" />
+<p>在前往船员餐厅的路上，我们还找到了沉船里著名的 “Snoopy Sign”。看到它的时候还有一点惊喜，感觉自己终于找到了攻略里反复提到的那个“彩蛋”。Top Dog是Spiegel Grove的昵称，它在舰队演习以及人道主义救援任务中表现亮眼，因而被赋予了“Top Dog”称号。</p>
+<img src="zh-4.jpeg" alt="zh" />
+<p>到达餐厅后，潜导会先清点人数，确认所有人都已经到达，没有人在途中掉队。然后我们便沿着出口回到甲板，结束此次沉船渗透。</p>
+<img src="zh-5.jpeg" alt="zh" />
+<h3>重游Key Largo</h3>
+<p>上一次来Keys还是 2017 年的圣诞节。当年精力旺盛，和朋友一起从迈阿密开车去 Key West，当天往返，一路在跨海高速上开了八个小时。九年过去，重新开车走上 Keys 的跨海大桥，最深的感触却是：九年前的自己竟然完全不知道这里拥有这么丰富的海底生态和沉船资源。</p>
+<p>之前在 ScubaBoard 上看到过一个让我印象很深的说法：一个人可以有很多兴趣爱好，但很难有哪一种爱好能像潜水一样，把你直接带到一个完全不同的世界。潜水给你的不仅仅是一项有趣的活动，而是一张进入新世界的门票。你可以看到以前从未见过的风景，也可以感受到陆地上完全不同的失重感。</p>
+<p>从 Key Largo 回来以后，后劲一直很大。即使回到旧金山的家里，前两天还在因为中暑和脱水不太舒服，脑子里想的却还是沉船和潜水。回头看这趟旅程，我也很庆幸自己这次又一次选择了“少想多做”：先决定去 Key Largo，再解决机票、住宿、装备、潜店这些具体问题。没有因为出发前给自己预设的各种困难，就把这趟旅程停留在想法里。</p>
+<p>好想再回大海去潜水呀૮ ˶ᵔ ᵕ ᵔ˶ ა。</p>
+        </div>
+        <p class="post-credit">Cover photo by <a href="https://unsplash.com/@olgaga" target="_blank" rel="noopener">Olga ga</a> on <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a></p>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-icons">
+      <a href="https://www.linkedin.com/in/chenjingrong/" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M20.45 20.45h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.354V9h3.414v1.561h.046c.476-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.284zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM6.87 20.45H3.803V9H6.87v11.45zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+      </a>
+      <a href="mailto:jingronc@gmail.com" aria-label="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <polyline points="2,4 12,13 22,4"/>
+        </svg>
+      </a>
+    </div>
+    <p>Made with 💙 by Jingrong Chen</p>
+  </footer>
+
+  <script>
+    const hamburger   = document.getElementById('hamburger');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuLinks   = document.querySelectorAll('.menu-link');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = menuOverlay.classList.toggle('is-open');
+      hamburger.classList.toggle('is-open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        menuOverlay.classList.remove('is-open');
+        hamburger.classList.remove('is-open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    const canvas = document.getElementById('bubbleCanvas');
+    const ctx    = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    function randomBubble() {
+      return {
+        x:       Math.random() * canvas.width,
+        y:       canvas.height + Math.random() * 200,
+        r:       Math.random() * 3 + 1,
+        speed:   Math.random() * 0.5 + 0.2,
+        opacity: Math.random() * 0.35 + 0.05,
+        drift:   (Math.random() - 0.5) * 0.4,
+      };
+    }
+
+    const bubbles = [];
+    for (let i = 0; i < 80; i++) {
+      const b = randomBubble();
+      b.y = Math.random() * canvas.height;
+      bubbles.push(b);
+    }
+
+    function drawBubble(b) {
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(94, 207, 218, ${b.opacity})`;
+      ctx.lineWidth   = 0.8;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180, 240, 245, ${b.opacity * 0.5})`;
+      ctx.fill();
+
+      b.y -= b.speed;
+      b.x += b.drift;
+      if (b.y + b.r < 0) Object.assign(b, randomBubble());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      bubbles.forEach(drawBubble);
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
