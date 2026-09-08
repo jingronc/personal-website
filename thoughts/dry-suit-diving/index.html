@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>在太浩湖学习干衣 — Jingrong Chen</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐠</text></svg>">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GHFT5PYBY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7GHFT5PYBY');
+  </script>
+  <link rel="stylesheet" href="../../style.css" />
+  <style>
+    .post-page {
+      min-height: 100vh;
+      padding: 5rem 0 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--accent); }
+    .back-link svg { width: 15px; height: 15px; }
+
+    .post-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+      background: rgba(0,180,216,0.15);
+      color: #00B4D8;
+    }
+
+    .post-title {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.2;
+      margin: 0 0 1rem;
+    }
+
+    .post-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      margin-bottom: 2.5rem;
+      display: block;
+    }
+
+    .post-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 2.5rem;
+    }
+
+    .post-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .post-body p { margin-bottom: 1.5rem; }
+    .post-body p:last-child { margin-bottom: 0; }
+    .post-body h2, .post-body h3 { color: rgba(255,255,255,0.92); margin: 2rem 0 1rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.5rem 1.4rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+      margin: 0 0 1.5rem;
+      font-style: italic;
+      color: rgba(255,255,255,0.85);
+    }
+    .post-body pre {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0 0 1.5rem;
+    }
+    .post-body img {
+      max-width: 100%;
+      max-height: 520px;
+      width: auto;
+      height: auto;
+      display: block;
+      margin: 0 0 1rem;
+      border-radius: 8px;
+    }
+    .post-body hr { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 2rem 0; }
+
+    .lang-switch {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .lang-switch a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .lang-switch a:hover { color: var(--accent); }
+    .lang-switch .lang-current { color: var(--accent); }
+    .lang-switch .lang-sep { color: rgba(255,255,255,0.2); }
+
+    .post-credit {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .post-credit a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 2px; }
+    .post-credit a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- HAMBURGER -->
+  <button class="hamburger dark fade-in" id="hamburger" aria-label="Open menu">
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- MENU OVERLAY -->
+  <div class="menu-overlay" id="menuOverlay">
+    <nav class="menu-nav">
+      <a href="../../index.html#about"  class="menu-link">About Me</a>
+      <a href="../../procreate.html"    class="menu-link">Procreate Art</a>
+      <a href="../../film-shots.html"   class="menu-link">Film Shots</a>
+      <a href="../../thoughts.html"     class="menu-link active">On My Mind</a>
+    </nav>
+  </div>
+
+  <!-- BUBBLES -->
+  <canvas id="bubbleCanvas" class="visible"></canvas>
+
+  <main class="post-page">
+    <div class="ambient-light"></div>
+    <div class="ambient-light ambient-light--right"></div>
+    <div class="container">
+      <div class="post-wrap">
+
+        <a href="../../thoughts.html" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          All Posts
+        </a>
+
+        
+        <span class="post-tag">Diving</span>
+        <h1 class="post-title">在太浩湖学习干衣</h1>
+        <span class="post-date">Aug 16, 2026</span>
+
+        <hr class="post-divider" />
+
+        <div class="post-body">
+          <p>自打从马来西亚回来后，我就开始研究旧金山附近有什么值得潜水的地方。北加州最著名的潜点蒙特雷距离旧金山只有两个小时车程，水下有世界级的海藻森林景观，运气好的时候还会偶遇海狮和海豹。光是想想就觉得很心动。</p>
+<p>但加州的海水可不像马来西亚那么友好。北加州属于典型的冷水潜水环境，海水常年只有十度左右。下水至少需要穿7毫米湿衣，而我实在是不抗冻，如果让我直接穿湿衣去潜蒙特雷，大概还没看到海藻森林，嘴唇就已经冻紫了。</p>
+<p>更麻烦的是，北加州很多经典潜点都是岸潜。不同于坐船到了潜点再直接下水，岸潜意味着你需要背着几十磅重的气瓶和配重，从岸边一路走进海里。湿滑的沙地、海藻以及海浪，再加上沉重的装备，对体力和装备管理的要求都比我之前熟悉的热带船潜高了不少。</p>
+<p>于是摆在我面前的选择其实很简单：上干衣<strong>。</strong></p>
+<p>干衣和我之前穿过的湿衣最大的区别是它真正把水隔绝在身体之外。通过脖颈和手腕处的密封圈，以及防水拉链，干衣在身体周围形成一个相对封闭的空间；穿在里面的保暖层负责提供主要的保温效果。但是对一个已经习惯了热带潜水的人来说，这意味着我不得不离开自己熟悉的舒适区，重新学习一套完全不同的潜水逻辑。所以挣扎了一番之后，我还是咬咬牙决定把干衣学下来，正式挑战加州的冷水岸潜。</p>
+<p>今年三月，我第一次头铁尝试干衣潜水，没想到第一次尝试就碰了个钉子。潜店租给我的干衣实在太大（这已经是他们最小的尺码了），导致我在泳池练习的时候严重进水，整个人狼狈得不行。教练最后出于安全考虑，决定直接放弃后续的开放水域训练。七月从佛罗里达回来以后，心痒痒的我又重新开始研究干衣。多方打听之后，终于在东湾一家潜店找到了真正适合我身材的干衣，于是干衣训练第二次重启。</p>
+<h3>理解干衣</h3>
+<p>这一次训练我才真正开始理解干衣：<strong>干衣潜水并不是“把湿衣换成干衣”这么简单。</strong></p>
+<p>干衣最重要的一个概念，是它本身也是一个浮力控制系统。穿着普通湿衣潜水时，潜水员主要通过肺和BCD来控制浮力；但穿上干衣之后，身体周围又多了一个可以充气、排气的空间。于是，潜水员实际上同时面对三个浮力变量：肺、BCD，以及干衣<strong>。</strong></p>
+<p>更麻烦的是，穿干衣以后通常还需要携带更多配重。你不仅多了一个浮力来源，还改变了自己的整体重量。</p>
+<p>所以干衣课程真正难的地方，并不是记住几个阀门怎么开、怎么关，而是要在一套全新的浮力装置组合和配重系统下，重新建立自己的中性浮力感。</p>
+<p>这也是为什么我觉得，<strong>干衣潜水有相当高的技术含量：你其实是在重新学习怎么控制自己的身体。</strong></p>
+<p>课程里有一些动作，我觉得真的需要练到肌肉记忆。</p>
+<ul><li><strong>手动开关左肩排气阀</strong></li></ul>
+<p>入水以及刚开始下潜的时候，需要保持排气阀处于开放状态，让干衣里的空气能够随着深度增加而排出去，避免空气被困在干衣里。下降到大约20英尺之后，再根据情况关闭排气阀。这个动作听起来非常简单，但真正下水以后，你需要同时关注深度、浮力、干衣里的空气，以及自己的姿势。刚开始练的时候，脑子里同时跑这么多东西，还是挺容易乱的。</p>
+<ul><li><strong>通过充气阀控制干衣里的空气</strong></li></ul>
+<p>当干衣里的空气被挤出去，产生明显的干衣压迫感（suit squeeze）时，需要通过胸前的充气按钮<strong>少量</strong>（划重点）充气，让干衣恢复到合适的状态。干衣并不是越鼓越好。你需要的是刚好足够的空气来消除挤压带来的不适感，同时避免过度充气让自己突然获得大量多余浮力。</p>
+<ul><li><strong>如果空气跑到脚部，要学会把它赶回来</strong></li></ul>
+<p>如果干衣里的空气大量聚集到脚部，你的脚就可能开始往上浮，身体逐渐变成一个“头朝下、脚朝上”的姿势，严重的情况会造成失控上升，非常危险。这时候不能慌，应该做的是通过身体核心翻滚重新调整身体姿态，把空气重新引导到身体上半部分，然后抬高左肩，让空气能够从排气阀排出去。如果情况比较严重，还需要卸下胸前的充气连接器（connector），避免过度充气。卸下连接器这个动作我第一次练的时候尤其狼狈。因为我训练时从头到尾都戴着手套，平时光手摸到连接器的时候容易找准位置，但戴上手套之后，触觉一下子变得迟钝很多。第一次训练时，我光是摸索怎么把connector拆下来就花了大概五分钟。</p>
+<h3>第一次岸潜</h3>
+<p>干衣技巧的训练已经让我手忙脚乱，而真正让我有些紧张的，还有对岸潜流程的不熟悉。教练总是开玩笑说，我是一个“被热带水域惯坏的潜水员”：之前的潜水都是坐船直接到了潜点，从来没有真正体验过背着整套装备进出水的苦。我的气瓶大概40磅，第一次下水时还带了17磅配重。光是想象一下，背着接近60磅的装备，从岸边一路走进海里，我多少还是有点眼前一黑的感觉。</p>
+<p>但真正走起来以后，反而没有想象中那么困难。我只能一点点迈着小碎步慢慢往水里走，踩过湿滑的岸边，努力保持身体平衡。最后居然一路顺利，没有摔跤，也没有闪腰。可以说第一次岸潜的表现完全超出了我的预期。困难大多只存在于想象里，那一瞬间有一种很具体的“又解锁了一项人生新技能”的感觉。</p>
+<p>反倒是从入水点游到真正的潜点这一段，让我明显感觉到了自己的cardio还有提升空间。背着装备走下水的时候还觉得自己挺能打，真正开始游起来以后，才发现长距离的surface swim才是另一回事。看来接下来除了继续练潜水技巧，也得好好训练一下自己的cardio了。</p>
+<p>唯一值得抱怨的，是回家之后的几天肩膀有些酸痛。不过和潜水本身带来的乐趣比起来，这点代价实在是不值一提。</p>
+<h3>从热带海洋到高山湖泊</h3>
+<p>我的干衣开放水域训练最终是在太浩湖完成的，而不是原计划中的蒙特雷。</p>
+<p>对于第一次尝试干衣岸潜的我来说，太浩湖其实是一个意外的好选择。相比蒙特雷，湖里的水面更加平静，进出水时没有那么大的浪，夏季水温也相对高一些。少了大海的风浪和复杂的shore entry，至少可以让我把注意力更多地放在干衣本身，而不是一边和装备搏斗，一边担心下一秒被浪拍倒。</p>
+<p>当然，代价也非常明显。这里毕竟是一个高山湖泊，水下的生态景观和蒙特雷完全不是一个量级。这两次训练潜水里，我们没有看到任何鱼类。倒是看到了不少小龙虾，也算是意料之外的惊喜。和我之前在热带海域潜水时五颜六色的珊瑚、成群的热带鱼相比，太浩湖的水下世界显得安静而克制。</p>
+<p>但也正因为如此，我第一次潜水时的注意力几乎全部放在了自己身上：干衣里的空气在哪里？我的trim怎么样？配重是不是合适？排气阀的位置对不对？没有太多东西可以让我分心，反而让我更专注地感受这套全新的装备。</p>
+<p>这次训练遇到的老师们也都非常可爱和热心。除了教我那些标准的干衣技巧，他们还会耐心处理一些只有真正穿过干衣才会发现的小问题。比如女生穿干衣时长头发到底应该怎么处理，才能既不影响脖颈密封，又不至于在穿脱干衣的时候把自己折腾得手忙脚乱。</p>
+<p>另外我也第一次真正体会到了北美岸潜和我熟悉的东南亚船潜之间的区别。在东南亚，潜店的工作人员会帮你把气瓶和装备搬上船，到了潜点以后，你需要做的事情就是穿好装备然后跳下去。而岸潜则完全是另一回事。你得自己规划entry和exit，自己搬运装备，自己背着气瓶走到水边，甚至还得考虑从停车的地方到入水点究竟有多远。某种意义上，潜水旅行顺便也变成了负重训练。岸潜则要求你从离开车的那一刻开始，就迅速进入潜水状态。它多了一点仪式感，也多了一点自力更生的意味。</p>
+<p>所以，如果你已经有一定的潜水基础，又准备第一次学习干衣，我其实非常推荐把太浩湖作为一个入门冷水岸潜的训练场。至少对我来说，在相对平静的湖水里先把干衣这套全新的潜水逻辑练熟，再去蒙特雷接受真正的大海洗礼，是一个舒服得多的选择。</p>
+<p>现在我已经是一名认证的干衣潜水员了。太浩湖让我学会了怎么在冷水里潜水，下一站终于可以挑战蒙特雷了。</p>
+        </div>
+        
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-icons">
+      <a href="https://www.linkedin.com/in/chenjingrong/" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M20.45 20.45h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.354V9h3.414v1.561h.046c.476-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.284zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM6.87 20.45H3.803V9H6.87v11.45zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+      </a>
+      <a href="mailto:jingronc@gmail.com" aria-label="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <polyline points="2,4 12,13 22,4"/>
+        </svg>
+      </a>
+    </div>
+    <p>Made with 💙 by Jingrong Chen</p>
+  </footer>
+
+  <script>
+    const hamburger   = document.getElementById('hamburger');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuLinks   = document.querySelectorAll('.menu-link');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = menuOverlay.classList.toggle('is-open');
+      hamburger.classList.toggle('is-open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        menuOverlay.classList.remove('is-open');
+        hamburger.classList.remove('is-open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    const canvas = document.getElementById('bubbleCanvas');
+    const ctx    = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    function randomBubble() {
+      return {
+        x:       Math.random() * canvas.width,
+        y:       canvas.height + Math.random() * 200,
+        r:       Math.random() * 3 + 1,
+        speed:   Math.random() * 0.5 + 0.2,
+        opacity: Math.random() * 0.35 + 0.05,
+        drift:   (Math.random() - 0.5) * 0.4,
+      };
+    }
+
+    const bubbles = [];
+    for (let i = 0; i < 80; i++) {
+      const b = randomBubble();
+      b.y = Math.random() * canvas.height;
+      bubbles.push(b);
+    }
+
+    function drawBubble(b) {
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(94, 207, 218, ${b.opacity})`;
+      ctx.lineWidth   = 0.8;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180, 240, 245, ${b.opacity * 0.5})`;
+      ctx.fill();
+
+      b.y -= b.speed;
+      b.x += b.drift;
+      if (b.y + b.r < 0) Object.assign(b, randomBubble());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      bubbles.forEach(drawBubble);
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
