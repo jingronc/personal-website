@@ -121,10 +121,12 @@ def resolve_unsplash_credit(url):
             "resolve a cover photo's credit."
         )
     # Unsplash photo URLs are ".../photos/<description-slug>-<photoId>" (or,
-    # rarely, just ".../photos/<photoId>") — the ID is always the last
-    # hyphen-separated chunk of the last path segment.
+    # rarely, just ".../photos/<photoId>") — the ID is always an 11-character
+    # suffix of the last path segment. It can itself contain hyphens (e.g.
+    # "jw17c8z-boA"), so splitting on the last "-" is unreliable; take a
+    # fixed-length suffix instead.
     last_segment = urllib.parse.urlsplit(url).path.rstrip("/").split("/")[-1]
-    photo_id = last_segment.rsplit("-", 1)[-1]
+    photo_id = last_segment[-11:]
     req = urllib.request.Request(f"https://api.unsplash.com/photos/{photo_id}")
     req.add_header("Authorization", f"Client-ID {access_key}")
     try:
