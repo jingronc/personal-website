@@ -442,6 +442,7 @@ ESSAY_TEMPLATE = """<!DOCTYPE html>
     .back-link {{
       display: inline-flex;
       align-items: center;
+      vertical-align: middle;
       gap: 0.35rem;
       font-size: 0.75rem;
       font-weight: 600;
@@ -457,6 +458,7 @@ ESSAY_TEMPLATE = """<!DOCTYPE html>
 
     .post-tag {{
       display: inline-block;
+      vertical-align: middle;
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.1em;
