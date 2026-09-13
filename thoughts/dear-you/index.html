@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dear You : 给阿嬷的情书 — Jingrong Chen</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐠</text></svg>">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GHFT5PYBY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7GHFT5PYBY');
+  </script>
+  <link rel="stylesheet" href="../../style.css" />
+  <style>
+    .post-page {
+      min-height: 100vh;
+      padding: 5rem 0 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--accent); }
+    .back-link svg { width: 15px; height: 15px; }
+
+    .post-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+      background: rgba(0,180,216,0.15);
+      color: #00B4D8;
+    }
+
+    .post-title {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.2;
+      margin: 0 0 1rem;
+    }
+
+    .post-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      margin-bottom: 2.5rem;
+      display: block;
+    }
+
+    .post-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 2.5rem;
+    }
+
+    .post-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .post-body p { margin-bottom: 1.5rem; }
+    .post-body p:last-child { margin-bottom: 0; }
+    .post-body h2, .post-body h3 { color: rgba(255,255,255,0.92); margin: 2rem 0 1rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.5rem 1.4rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+      margin: 0 0 1.5rem;
+      font-style: italic;
+      color: rgba(255,255,255,0.85);
+    }
+    .post-body pre {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0 0 1.5rem;
+    }
+    .post-body img {
+      max-width: 100%;
+      max-height: 520px;
+      width: auto;
+      height: auto;
+      display: block;
+      margin: 0 0 1rem;
+      border-radius: 8px;
+    }
+    .post-body hr { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 2rem 0; }
+
+    .lang-switch {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .lang-switch a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .lang-switch a:hover { color: var(--accent); }
+    .lang-switch .lang-current { color: var(--accent); }
+    .lang-switch .lang-sep { color: rgba(255,255,255,0.2); }
+
+    .post-credit {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .post-credit a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 2px; }
+    .post-credit a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- HAMBURGER -->
+  <button class="hamburger dark fade-in" id="hamburger" aria-label="Open menu">
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- MENU OVERLAY -->
+  <div class="menu-overlay" id="menuOverlay">
+    <nav class="menu-nav">
+      <a href="../../index.html#about"  class="menu-link">About Me</a>
+      <a href="../../procreate.html"    class="menu-link">Procreate Art</a>
+      <a href="../../film-shots.html"   class="menu-link">Film Shots</a>
+      <a href="../../thoughts.html"     class="menu-link active">On My Mind</a>
+    </nav>
+  </div>
+
+  <!-- BUBBLES -->
+  <canvas id="bubbleCanvas" class="visible"></canvas>
+
+  <main class="post-page">
+    <div class="ambient-light"></div>
+    <div class="ambient-light ambient-light--right"></div>
+    <div class="container">
+      <div class="post-wrap">
+
+        <a href="../../thoughts.html" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          All Posts
+        </a>
+
+        
+        <span class="post-tag">Movie</span>
+        <h1 class="post-title">Dear You : 给阿嬷的情书</h1>
+        <span class="post-date">Sep 5, 2026</span>
+
+        <hr class="post-divider" />
+
+        <div class="post-body">
+          <p>周末去电影院看了《给阿嬷的情书》。</p>
+<p>近两年看过太多北美移民“离乡、移民、故乡、思念”的故事。自己本来对潮汕移民下南洋的故事也不太了解，而且另一部北美移民题材的电影《过往人生》给我的冲击又太大，我甚至有一点怀疑：我可能已经很难再被相似题材的电影打动了。</p>
+<p>但电影里的感情还是一点一点地渗进来了。最让我震撼的不是那些我原本熟悉的“乡愁”和“移民”叙事，而是最后那个很安静的镜头：阿嬷坐在车里，车窗外是唐人街。然后过去和现在开始重叠：年轻的南枝站在那里，年轻的木生骑着车经过。阿嬷终于看见了那个她等待了一辈子的人曾经生活过的世界。</p>
+<img src="zh-1.png" alt="zh" />
+<p>我忍不住去猜，她那时候究竟在想什么。</p>
+<p>也许她会想，原来这就是我家木生生活过的地方。原来这些年，他看到的街道、经过的店铺、每天走过的路，是这个样子的。她终于看到了他当年的眼睛看到的唐人街。也许她会发现，这里和潮汕竟然那么像。她可能会突然觉得，也许木生没有她想象中那么想家，也许也因此终于有了一点释然。</p>
+<p>然后她又看见了南枝。她也许会想，有这样一个老朋友在身边，他那时候也许过得没有那么辛苦吧。</p>
+<p>她等待了那么多年，脑海里的木生可能一直停留在“远方的、想家的、需要被牵挂的人”这个形象里。到了这一刻，她终于不再只是想象那个远去的人过着怎样的生活，她第一次亲眼看见了他的世界，“我终于抵达了你的人生”<strong>。</strong></p>
+<img src="zh-2.png" alt="zh" />
+<img src="zh-3.png" alt="zh" />
+<img src="zh-4.png" alt="zh" />
+<p>后来我才知道，这个看似什么都没有发生的镜头，剧组其实反复拍摄了39次，最后使用的是第38次的画面。他们只是一直在等一个合适的光线，等唐人街落进那个刚刚好的黄昏里。</p>
+<p>而这个镜头打动我的地方其实还有另外一层。当过去和现在重叠的时候，我们看到的不再只是木生和南枝的故事。他们其实只是唐人街里两个再普通不过的人，只是他们恰好被电影看见了。而在他们身后，还有无数没有被讲述的人生：有人一辈子没有回过故乡，有人慢慢习惯了这里的语言和食物，有人在这里重新开始落地生根。</p>
+<p>对于阿嬷来说，她终于看见了木生曾经生活过的地方。</p>
+<p>而对于我们来说，我们终于开始看见了木生之外，那些没有被讲述的人。</p>
+<img src="zh-5.png" alt="zh" />
+        </div>
+        
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-icons">
+      <a href="https://www.linkedin.com/in/chenjingrong/" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M20.45 20.45h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.354V9h3.414v1.561h.046c.476-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.284zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM6.87 20.45H3.803V9H6.87v11.45zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+      </a>
+      <a href="mailto:jingronc@gmail.com" aria-label="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <polyline points="2,4 12,13 22,4"/>
+        </svg>
+      </a>
+    </div>
+    <p>Made with 💙 by Jingrong Chen</p>
+  </footer>
+
+  <script>
+    const hamburger   = document.getElementById('hamburger');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuLinks   = document.querySelectorAll('.menu-link');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = menuOverlay.classList.toggle('is-open');
+      hamburger.classList.toggle('is-open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        menuOverlay.classList.remove('is-open');
+        hamburger.classList.remove('is-open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    const canvas = document.getElementById('bubbleCanvas');
+    const ctx    = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    function randomBubble() {
+      return {
+        x:       Math.random() * canvas.width,
+        y:       canvas.height + Math.random() * 200,
+        r:       Math.random() * 3 + 1,
+        speed:   Math.random() * 0.5 + 0.2,
+        opacity: Math.random() * 0.35 + 0.05,
+        drift:   (Math.random() - 0.5) * 0.4,
+      };
+    }
+
+    const bubbles = [];
+    for (let i = 0; i < 80; i++) {
+      const b = randomBubble();
+      b.y = Math.random() * canvas.height;
+      bubbles.push(b);
+    }
+
+    function drawBubble(b) {
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(94, 207, 218, ${b.opacity})`;
+      ctx.lineWidth   = 0.8;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180, 240, 245, ${b.opacity * 0.5})`;
+      ctx.fill();
+
+      b.y -= b.speed;
+      b.x += b.drift;
+      if (b.y + b.r < 0) Object.assign(b, randomBubble());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      bubbles.forEach(drawBubble);
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

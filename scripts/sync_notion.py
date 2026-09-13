@@ -72,10 +72,14 @@ CATEGORY_META = {
         "class": "life", "dot": "dot-life", "fallback_img": "images/life.jpg",
         "fallback_credit": None,
     },
+    "Movie": {
+        "class": "movie", "dot": "dot-movie", "fallback_img": "images/movie.jpg",
+        "fallback_credit": None,
+    },
 }
 
 CARD_HEIGHTS = {
-    "diving": 400, "gamedesign": 240, "bookreview": 180, "life": 300,
+    "diving": 400, "gamedesign": 240, "bookreview": 180, "life": 300, "movie": 320,
 }
 
 # Order determines which language becomes the "canonical" index.html inside
@@ -384,7 +388,15 @@ def get_cover(page, article_dir, prefix):
         return None
     url = cover["external"]["url"] if cover["type"] == "external" else cover["file"]["url"]
     ext = os.path.splitext(url.split("?")[0])[1] or ".jpg"
-    dest = download_image(url, article_dir / f"{prefix}-cover{ext}")
+    try:
+        dest = download_image(url, article_dir / f"{prefix}-cover{ext}")
+    except urllib.error.HTTPError as e:
+        # Notion's own default gallery covers (as opposed to a user-uploaded
+        # or Unsplash-picked one) live behind an authenticated endpoint and
+        # 403 on a plain request — treat as "no cover" rather than aborting
+        # the whole sync.
+        print(f"warning: couldn't download cover ({e.code}), falling back to category default: {url}")
+        return None
     return dest.name
 
 
