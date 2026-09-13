@@ -439,17 +439,22 @@ ESSAY_TEMPLATE = """<!DOCTYPE html>
       z-index: 1;
     }}
 
+    .post-header-row {{
+      display: flex;
+      align-items: flex-end;
+      gap: 0.75rem;
+      margin-bottom: 3rem;
+    }}
+
     .back-link {{
       display: inline-flex;
       align-items: center;
-      vertical-align: middle;
       gap: 0.35rem;
       font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-bottom: 3rem;
       transition: color 0.2s;
       text-decoration: none;
     }}
@@ -458,14 +463,12 @@ ESSAY_TEMPLATE = """<!DOCTYPE html>
 
     .post-tag {{
       display: inline-block;
-      vertical-align: middle;
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 0.25rem 0.65rem;
       border-radius: 999px;
-      margin-bottom: 1.25rem;
       background: rgba(0,180,216,0.15);
       color: #00B4D8;
     }}
@@ -581,15 +584,17 @@ ESSAY_TEMPLATE = """<!DOCTYPE html>
     <div class="container">
       <div class="post-wrap">
 
-        <a href="../../thoughts.html" class="back-link">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          All Posts
-        </a>
+        <div class="post-header-row">
+          <a href="../../thoughts.html" class="back-link">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            All Posts
+          </a>
+          <span class="post-tag">{category}</span>
+        </div>
 
         {lang_switch}
-        <span class="post-tag">{category}</span>
         <h1 class="post-title">{title}</h1>
         <span class="post-date">{date_display}</span>
 
