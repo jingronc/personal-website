@@ -382,10 +382,19 @@ def plain_text_of(rich_text_prop):
     return "".join(rt.get("plain_text", "") for rt in rich_text_prop)
 
 
+def existing_cover(article_dir, prefix):
+    """A cover placed directly in the article folder by hand (e.g. a movie
+    poster that isn't hosted anywhere Notion's API can hand us a URL for).
+    Preserved across resyncs since Notion has no record of it to re-fetch."""
+    for match in sorted(article_dir.glob(f"{prefix}-cover.*")):
+        return match.name
+    return None
+
+
 def get_cover(page, article_dir, prefix):
     cover = page.get("cover")
     if not cover:
-        return None
+        return existing_cover(article_dir, prefix)
     url = cover["external"]["url"] if cover["type"] == "external" else cover["file"]["url"]
     ext = os.path.splitext(url.split("?")[0])[1] or ".jpg"
     try:
@@ -393,10 +402,10 @@ def get_cover(page, article_dir, prefix):
     except urllib.error.HTTPError as e:
         # Notion's own default gallery covers (as opposed to a user-uploaded
         # or Unsplash-picked one) live behind an authenticated endpoint and
-        # 403 on a plain request — treat as "no cover" rather than aborting
-        # the whole sync.
+        # 403 on a plain request — fall back to a manually-placed cover already
+        # sitting in the article folder, if any, rather than aborting the sync.
         print(f"warning: couldn't download cover ({e.code}), falling back to category default: {url}")
-        return None
+        return existing_cover(article_dir, prefix)
     return dest.name
 
 

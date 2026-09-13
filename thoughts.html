@@ -61,13 +61,23 @@
     .back-link:hover { color: var(--accent); }
     .back-link svg { width: 15px; height: 15px; }
 
-    /* ── Responsive grid — column count flexes with viewport width ── */
+    /* ── Responsive masonry — column count flexes with viewport width,
+       and columns pack independently so cards of different categories
+       (each with their own image height) don't force row alignment ── */
     .post-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      display: flex;
+      align-items: flex-start;
       gap: 1.25rem;
       position: relative;
       z-index: 1;
+    }
+
+    .post-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      flex: 1 1 0;
+      min-width: 0;
     }
 
     /* Varied image heights — the casual look */
@@ -299,6 +309,57 @@
         document.body.style.overflow = '';
       });
     });
+
+    // ── Masonry — pack cards into the shortest column so cards of
+    // different categories (each with their own image height) settle
+    // naturally instead of being forced to align to a shared row height ──
+    const MASONRY_GAP = 20;       // px, matches .post-grid/.post-col gap (1.25rem)
+    const MASONRY_MIN_COL = 260;  // px, minimum column width before dropping a column
+
+    function layoutMasonry() {
+      const grid = document.getElementById('postGrid');
+      if (!grid) return;
+
+      const cards = Array.from(grid.querySelectorAll('.post-card'));
+      if (!cards.length) return;
+
+      // Measure heights while cards are still in their current (already
+      // laid-out) position, before any of them get moved.
+      const heights = cards.map(card => card.offsetHeight);
+
+      const containerWidth = grid.getBoundingClientRect().width;
+      const columnCount = Math.max(
+        1,
+        Math.min(cards.length, Math.floor((containerWidth + MASONRY_GAP) / (MASONRY_MIN_COL + MASONRY_GAP)))
+      );
+
+      const columns = Array.from({ length: columnCount }, () => {
+        const col = document.createElement('div');
+        col.className = 'post-col';
+        return col;
+      });
+      const colHeights = new Array(columnCount).fill(0);
+
+      cards.forEach((card, i) => {
+        let shortest = 0;
+        for (let c = 1; c < columnCount; c++) {
+          if (colHeights[c] < colHeights[shortest]) shortest = c;
+        }
+        columns[shortest].appendChild(card);
+        colHeights[shortest] += heights[i] + MASONRY_GAP;
+      });
+
+      grid.innerHTML = '';
+      columns.forEach(col => grid.appendChild(col));
+    }
+
+    layoutMasonry();
+
+    let masonryResizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(masonryResizeTimer);
+      masonryResizeTimer = setTimeout(layoutMasonry, 150);
+    }, { passive: true });
 
     // ── Scroll reveal ──
     const cards = document.querySelectorAll('.post-card');
