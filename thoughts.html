@@ -121,6 +121,11 @@
       background-size: cover;
       background-position: center;
       transition: transform 0.5s ease;
+      /* Clip its own corners rather than relying solely on the parent's
+         overflow:hidden — some browsers show a hairline gap at a rounded
+         corner when the clipped child is promoted to its own compositing
+         layer (as this one is, via the transform transition above). */
+      border-radius: 12px 12px 0 0;
     }
 
     .post-card:hover .post-card-img {
