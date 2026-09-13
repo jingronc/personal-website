@@ -21,6 +21,10 @@
       overflow: hidden;
     }
 
+    .thoughts-page .container {
+      max-width: 1240px;
+    }
+
     .page-header {
       text-align: center;
       margin-bottom: 2.5rem;
@@ -57,16 +61,14 @@
     .back-link:hover { color: var(--accent); }
     .back-link svg { width: 15px; height: 15px; }
 
-    /* ── Masonry columns ── */
+    /* ── Responsive grid — column count flexes with viewport width ── */
     .post-grid {
-      columns: 3;
-      column-gap: 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
       position: relative;
       z-index: 1;
     }
-
-    @media (max-width: 800px) { .post-grid { columns: 2; } }
-    @media (max-width: 480px) { .post-grid { columns: 1; } }
 
     /* Varied image heights — the casual look */
     .post-card--diving     .post-card-img { height: 400px; }
@@ -76,8 +78,6 @@
 
     /* ── Post card ── */
     .post-card {
-      break-inside: avoid;
-      margin-bottom: 1.25rem;
       border-radius: 12px;
       overflow: hidden;
       text-decoration: none;
